@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_marginHorizontal="16dp"
+        android:text="在此页面点击锁屏键,部分手机需要去设置页开启锁屏显示"
+        android:textSize="18dp"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/button_lock_notice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="显示锁屏通知" />
+
+</LinearLayout>
