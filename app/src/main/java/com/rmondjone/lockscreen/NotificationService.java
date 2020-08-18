@@ -1,6 +1,5 @@
 package com.rmondjone.lockscreen;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,6 +11,7 @@ import android.os.IBinder;
 import android.widget.RemoteViews;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -31,11 +31,12 @@ import java.util.concurrent.TimeUnit;
  */
 public class NotificationService extends Service {
     private NotificationManager notificationManager;
-    private Notification.Builder builder;
+    private NotificationCompat.Builder builder;
     private SimpleDateFormat simpleDateFormat;
     private Runnable mRunnable;
     private ScheduledExecutorService executorService;
     private boolean isStart;
+    private static final String channelId = "111111";
 
     @Nullable
     @Override
@@ -48,7 +49,7 @@ public class NotificationService extends Service {
         super.onCreate();
         simpleDateFormat = new SimpleDateFormat("HH:mm:ss", Locale.US);
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        builder = new Notification.Builder(this);
+        builder = new NotificationCompat.Builder(this, channelId);
         executorService = new ScheduledThreadPoolExecutor(1);
         mRunnable = () -> {
             RemoteViews remoteViews = getNoticeRemoteViews();
@@ -91,7 +92,7 @@ public class NotificationService extends Service {
         if (executorService != null && !executorService.isShutdown()) {
             executorService.shutdown();
         }
-        notificationManager.cancel(1);
+        notificationManager.cancel(10001);
         stopSelf();
     }
 
@@ -103,27 +104,33 @@ public class NotificationService extends Service {
     private void sendLockNotice() {
         //Android 8适配
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel("1", "锁屏通知", NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel notificationChannel = new NotificationChannel(channelId, "锁屏通知", NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(notificationChannel);
-            builder.setChannelId("1");
+            builder.setChannelId(channelId);
         }
         //自定义通知栏视图
         RemoteViews remoteViews = getNoticeRemoteViews();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             builder.setCustomBigContentView(remoteViews);
+            builder.setCustomContentView(remoteViews);
         } else {
             builder.setContent(remoteViews);
         }
-        builder.setSmallIcon(R.mipmap.ic_launcher);
         //常驻通知栏
         builder.setOngoing(true);
+        //设置图片
         builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
+        builder.setSmallIcon(R.mipmap.ic_launcher);
         //锁屏显示
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder.setVisibility(Notification.VISIBILITY_PUBLIC);
+            builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         }
-        notificationManager.notify(1, builder.build());
-        startForeground(1, builder.build());
+        //部分厂商无法识别自定义视图，例如小米，不会处理自定义视图，只会当做普通通知处理！
+        //https://dev.mi.com/console/doc/detail?pId=1300
+        builder.setContentTitle("通知标题");
+        builder.setContentText("通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容");
+        notificationManager.notify(10001, builder.build());
+        startForeground(10001, builder.build());
     }
 
     /**

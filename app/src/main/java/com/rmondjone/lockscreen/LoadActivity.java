@@ -70,6 +70,7 @@ public class LoadActivity extends AppCompatActivity {
         lockButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, LockScreenNotice.class);
             startActivity(intent);
+            finish();
         });
     }
 

@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="14:46:46"
-        android:textColor="@color/color_FFFFFF"
+        android:textColor="@color/colorPrimary"
         android:textSize="30sp" />
 
     <ImageView
