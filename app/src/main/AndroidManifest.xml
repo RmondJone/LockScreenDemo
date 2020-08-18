@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -24,7 +26,18 @@
         </activity>
         <activity
             android:name=".MainActivity"
+            android:launchMode="singleTask"
             android:theme="@style/TransparentTheme" />
+        <activity
+            android:name=".LockScreenNotice"
+            android:launchMode="singleTask" />
+
+        <service android:name=".NotificationService" />
+        <receiver android:name=".NotificationReceiver">
+            <intent-filter>
+                <action android:name="com.rmondjone.lockscreen.close" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
